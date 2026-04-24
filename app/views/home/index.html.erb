@@ -1,0 +1,20 @@
+<% content_for :title, "Nutriplan" %>
+
+<section class="mx-auto max-w-2xl px-6 py-20">
+  <p class="text-xs uppercase tracking-[0.18em] text-ink-400">Nutriplan</p>
+  <h1 class="mt-3 text-4xl font-semibold tracking-tight text-ink-100">
+    Tu plan de la semana, sin fricción.
+  </h1>
+  <p class="mt-4 text-ink-300">
+    Editor semanal, logging diario y lista de compras en un mismo lugar.
+  </p>
+
+  <div class="mt-8 flex items-center gap-3">
+    <% if user_signed_in? %>
+      <span class="text-sm text-ink-400">Hola, <%= current_user.email %>.</span>
+    <% else %>
+      <%= link_to "Iniciar sesión", new_user_session_path, class: "btn-primary" %>
+      <%= link_to "Crear cuenta", new_user_registration_path, class: "btn-ghost" %>
+    <% end %>
+  </div>
+</section>

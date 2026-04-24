@@ -1,14 +1,17 @@
 <!DOCTYPE html>
-<html>
+<html class="dark h-full">
   <head>
     <title><%= content_for(:title) || "Nutriplan" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="color-scheme" content="dark light">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
     <%= yield :head %>
 
+    <link rel="preconnect" href="https://rsms.me/">
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
     <link rel="manifest" href="/manifest.json">
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
@@ -17,7 +20,31 @@
     <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
   </head>
 
-  <body>
-    <%= yield %>
+  <body class="min-h-full antialiased">
+    <header class="border-b border-ink-200 bg-white/70 backdrop-blur dark:border-ink-800 dark:bg-ink-950/70">
+      <nav class="mx-auto flex max-w-5xl items-center justify-between px-6 py-3">
+        <%= link_to root_path, class: "text-sm font-semibold tracking-tight text-ink-900 dark:text-ink-100 hover:no-underline" do %>
+          Nutriplan
+        <% end %>
+
+        <div class="flex items-center gap-2">
+          <% if user_signed_in? %>
+            <span class="hidden text-xs text-ink-400 sm:inline"><%= current_user.email %></span>
+            <%= button_to "Salir", destroy_user_session_path, method: :delete, class: "btn-ghost", form: { data: { turbo: false } } %>
+          <% else %>
+            <%= link_to "Iniciar sesión", new_user_session_path, class: "btn-ghost" %>
+            <%= link_to "Crear cuenta", new_user_registration_path, class: "btn-primary" %>
+          <% end %>
+        </div>
+      </nav>
+    </header>
+
+    <div id="flash" class="mx-auto max-w-5xl px-6 pt-4">
+      <%= render "shared/flash" %>
+    </div>
+
+    <main class="mx-auto max-w-5xl px-6 py-6">
+      <%= yield %>
+    </main>
   </body>
 </html>

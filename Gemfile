@@ -18,6 +18,11 @@ gem "stimulus-rails"
 gem "cssbundling-rails"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
+
+# Authentication [https://github.com/heartcombo/devise]
+gem "devise"
+# Background jobs [https://github.com/sidekiq/sidekiq]
+gem "sidekiq"
 # Use Redis adapter to run Action Cable in production
 # gem "redis", ">= 4.0.1"
 
@@ -45,10 +50,21 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
+
+  # Load ENV vars from .env
+  gem "dotenv-rails"
+
+  # RSpec + factories + fake data
+  gem "rspec-rails"
+  gem "factory_bot_rails"
+  gem "faker"
 end
 
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
+
+  # Annotate models with schema info
+  gem "annotate"
 end
 

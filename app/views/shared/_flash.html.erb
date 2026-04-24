@@ -1,0 +1,5 @@
+<% flash.each do |type, message| %>
+  <% next if message.blank? %>
+  <% klass = type.to_s == "alert" ? "flash-alert" : "flash-notice" %>
+  <div class="<%= klass %> mb-3" role="status"><%= message %></div>
+<% end %>
