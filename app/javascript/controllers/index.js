@@ -9,3 +9,9 @@ application.register("hello", HelloController)
 
 import AutosaveController from "./autosave_controller"
 application.register("autosave", AutosaveController)
+
+import MealLogController from "./meal_log_controller"
+application.register("meal-log", MealLogController)
+
+import ScoreController from "./score_controller"
+application.register("score", ScoreController)

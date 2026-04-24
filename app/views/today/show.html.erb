@@ -1,0 +1,38 @@
+<% content_for :title, "Hoy" %>
+
+<div class="mb-6">
+  <p class="text-xs uppercase tracking-[0.18em] text-ink-400">
+    <%= I18n.l(Date.current, format: "%A %-d de %B").capitalize %>
+  </p>
+  <h1 class="text-2xl font-semibold tracking-tight text-ink-100">Hoy</h1>
+  <% if @plan %>
+    <p class="mt-1 text-xs text-ink-500">
+      <%= link_to @plan.name, edit_plan_path(@plan), class: "hover:text-accent-400 hover:no-underline" %>
+    </p>
+  <% end %>
+</div>
+
+<% if @plan && @plan_day %>
+  <div class="flex flex-col gap-4">
+    <% @meals.each do |meal| %>
+      <%= render "meal", meal: meal %>
+    <% end %>
+  </div>
+
+  <section class="mt-8 rounded-md border border-ink-800 bg-ink-900/40 p-4">
+    <h2 class="text-xs uppercase tracking-[0.18em] text-ink-400">Cómo te fue hoy</h2>
+    <%= render "daily_note_form", plan_day: @plan_day, daily_note: @daily_note, saved_at: nil %>
+  </section>
+<% elsif @plan %>
+  <div class="rounded-md border border-dashed border-ink-800 px-6 py-10 text-center">
+    <p class="text-sm text-ink-300">Hoy no hay día configurado en tu plan.</p>
+    <p class="mt-1 text-xs text-ink-500">
+      El plan cubre <%= I18n.l(@plan.start_date, format: :short) %> — <%= I18n.l(@plan.end_date, format: :short) %>.
+    </p>
+  </div>
+<% else %>
+  <div class="rounded-md border border-dashed border-ink-800 px-6 py-10 text-center">
+    <p class="text-sm text-ink-300">No tienes un plan activo hoy.</p>
+    <%= link_to "Crear plan", new_plan_path, class: "btn-primary mt-4" %>
+  </div>
+<% end %>

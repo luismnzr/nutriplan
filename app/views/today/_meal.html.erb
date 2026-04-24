@@ -1,0 +1,100 @@
+<%
+  log    = meal.meal_log
+  status = log&.status
+  border_class =
+    case status
+    when "eaten"    then "border-accent-500/40"
+    when "modified" then "border-amber-500/40"
+    when "skipped"  then "border-red-500/30 opacity-60"
+    else "border-ink-800"
+    end
+%>
+
+<%= turbo_frame_tag dom_id(meal, :today), class: "block rounded-md border #{border_class} bg-ink-900/50" do %>
+  <header class="flex items-center justify-between border-b border-ink-800 px-4 py-2">
+    <div>
+      <p class="text-xs uppercase tracking-wider text-ink-400"><%= meal_type_label(meal.meal_type) %></p>
+      <p class="text-[11px] text-ink-500"><%= meal.time&.strftime("%H:%M") %></p>
+    </div>
+    <% if log %>
+      <span class="text-[11px] text-ink-400">
+        <%= t("meal_log.status.#{status}") %>
+        <% if log.logged_at %> · <%= I18n.l(log.logged_at.in_time_zone, format: "%H:%M") %><% end %>
+      </span>
+    <% end %>
+  </header>
+
+  <div class="px-4 py-3">
+    <% if meal.meal_items.any? %>
+      <ul class="space-y-2">
+        <% meal.meal_items.sort_by(&:position).each do |item| %>
+          <li>
+            <p class="text-sm text-ink-100"><%= item.description %></p>
+            <% if item.quantity.present? %>
+              <p class="text-xs text-ink-500"><%= item.quantity %></p>
+            <% end %>
+            <% if item.swap_options.any? %>
+              <div class="mt-1 flex flex-wrap gap-1.5">
+                <% item.swap_options.each do |option| %>
+                  <%= button_to meal_meal_log_path(meal),
+                                params: { meal_log: { status: "modified", actual_description: option } },
+                                class: "rounded-full border border-ink-700 bg-ink-900 px-2.5 py-0.5 text-[11px] text-ink-300 hover:border-amber-500 hover:text-amber-300",
+                                form: { data: { turbo_frame: dom_id(meal, :today) } } do %>
+                    ↔ <%= option %>
+                  <% end %>
+                <% end %>
+              </div>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="text-xs italic text-ink-500">Sin alimentos configurados.</p>
+    <% end %>
+
+    <% if status == "modified" && log.actual_description.present? %>
+      <p class="mt-3 rounded bg-amber-500/10 px-3 py-2 text-xs text-amber-200">
+        <span class="font-medium">Modificaste:</span> <%= log.actual_description %>
+      </p>
+    <% end %>
+  </div>
+
+  <footer class="border-t border-ink-800 px-2 py-2" data-controller="meal-log">
+    <div class="grid grid-cols-3 gap-2" data-meal-log-target="buttons">
+      <%= button_to meal_meal_log_path(meal),
+                    params: { meal_log: { status: "eaten" } },
+                    class: "flex items-center justify-center rounded-md px-3 py-2.5 text-sm font-medium transition-colors #{status == 'eaten' ? 'bg-accent-600 text-white' : 'bg-ink-800 text-ink-200 hover:bg-accent-600/80 hover:text-white'}",
+                    form: { data: { turbo_frame: dom_id(meal, :today) } } do %>
+        ✓ Comí
+      <% end %>
+
+      <button type="button"
+              data-action="meal-log#showModified"
+              class="flex items-center justify-center rounded-md px-3 py-2.5 text-sm font-medium transition-colors <%= status == 'modified' ? 'bg-amber-500 text-white' : 'bg-ink-800 text-ink-200 hover:bg-amber-500/80 hover:text-white' %>">
+        ↔ Modifiqué
+      </button>
+
+      <%= button_to meal_meal_log_path(meal),
+                    params: { meal_log: { status: "skipped" } },
+                    class: "flex items-center justify-center rounded-md px-3 py-2.5 text-sm font-medium transition-colors #{status == 'skipped' ? 'bg-red-500 text-white' : 'bg-ink-800 text-ink-200 hover:bg-red-500/80 hover:text-white'}",
+                    form: { data: { turbo_frame: dom_id(meal, :today) } } do %>
+        × Skip
+      <% end %>
+    </div>
+
+    <%= form_with url: meal_meal_log_path(meal), method: :post,
+                  data: { meal_log_target: "form", turbo_frame: dom_id(meal, :today) },
+                  class: "mt-2 hidden",
+                  html: { "data-controller-initial-hidden": true } do |f| %>
+      <%= f.hidden_field "meal_log[status]", value: "modified" %>
+      <div class="flex items-center gap-2">
+        <%= f.text_field "meal_log[actual_description]",
+                          value: log&.actual_description,
+                          class: "field flex-1",
+                          placeholder: "¿Qué comiste en realidad?",
+                          data: { meal_log_target: "input" } %>
+        <%= f.submit "Guardar", class: "btn-primary" %>
+      </div>
+    <% end %>
+  </footer>
+<% end %>

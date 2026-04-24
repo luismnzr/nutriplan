@@ -29,6 +29,7 @@
 
         <div class="flex items-center gap-2">
           <% if user_signed_in? %>
+            <%= link_to "Hoy", today_path, class: "btn-ghost" %>
             <%= link_to "Planes", plans_path, class: "btn-ghost" %>
             <span class="hidden text-xs text-ink-400 sm:inline"><%= current_user.email %></span>
             <%= button_to "Salir", destroy_user_session_path, method: :delete, class: "btn-ghost", form: { data: { turbo: false } } %>

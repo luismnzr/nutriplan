@@ -1,0 +1,51 @@
+<%= turbo_frame_tag dom_id(plan_day, :note), class: "block" do %>
+  <%= form_with model: daily_note,
+                url: plan_day_daily_note_path(plan_day),
+                method: :post,
+                class: "mt-4 space-y-4" do |f| %>
+    <div>
+      <p class="mb-1.5 text-xs font-medium uppercase tracking-wider text-ink-400">Puntuación general</p>
+      <div class="flex gap-2" data-controller="score" data-score-hidden-name-value="daily_note[overall_score]">
+        <% (1..5).each do |n| %>
+          <button type="button"
+                  data-action="score#pick"
+                  data-score-value-param="<%= n %>"
+                  class="flex-1 rounded-md border px-3 py-2 text-sm font-medium transition-colors <%= daily_note.overall_score == n ? 'border-accent-500 bg-accent-500/20 text-accent-200' : 'border-ink-700 bg-ink-900 text-ink-300 hover:border-accent-500/60' %>">
+            <%= n %>
+          </button>
+        <% end %>
+        <%= hidden_field_tag "daily_note[overall_score]", daily_note.overall_score, data: { score_target: "input" } %>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <%= f.label :energy_level, "Energía (1-5)", class: "mb-1 block text-xs font-medium uppercase tracking-wider text-ink-400" %>
+        <%= f.number_field :energy_level, min: 1, max: 5, class: "field" %>
+      </div>
+      <div>
+        <%= f.label :hunger_level, "Hambre (1-5)", class: "mb-1 block text-xs font-medium uppercase tracking-wider text-ink-400" %>
+        <%= f.number_field :hunger_level, min: 1, max: 5, class: "field" %>
+      </div>
+    </div>
+
+    <div>
+      <%= f.label :mood, "Ánimo", class: "mb-1 block text-xs font-medium uppercase tracking-wider text-ink-400" %>
+      <%= f.text_field :mood, class: "field", maxlength: 40, placeholder: "Una palabra o dos…" %>
+    </div>
+
+    <div>
+      <%= f.label :free_text, "Notas libres", class: "mb-1 block text-xs font-medium uppercase tracking-wider text-ink-400" %>
+      <%= f.text_area :free_text, rows: 3, class: "field", placeholder: "Lo que quieras recordar del día…" %>
+    </div>
+
+    <div class="flex items-center justify-between">
+      <%= f.submit (daily_note.persisted? ? "Actualizar" : "Guardar"), class: "btn-primary" %>
+      <% if saved_at %>
+        <span class="text-xs text-ink-500">Guardado <%= I18n.l(saved_at.in_time_zone, format: "%H:%M:%S") %></span>
+      <% elsif daily_note.persisted? %>
+        <span class="text-xs text-ink-500">Guardado <%= I18n.l(daily_note.updated_at.in_time_zone, format: "%H:%M") %></span>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>
