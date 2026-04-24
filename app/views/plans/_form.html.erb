@@ -1,0 +1,38 @@
+<%= form_with model: plan, url: plan.persisted? ? plan_path(plan) : plans_path, class: "mt-6 space-y-4" do |f| %>
+  <% if plan.errors.any? %>
+    <div class="flash-alert">
+      <p class="font-medium">No se pudo guardar el plan:</p>
+      <ul class="list-disc pl-5">
+        <% plan.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= f.label :name, "Nombre", class: "mb-1 block text-xs font-medium uppercase tracking-wider text-ink-400" %>
+    <%= f.text_field :name, class: "field", required: true, autofocus: !plan.persisted? %>
+  </div>
+
+  <div class="grid grid-cols-2 gap-4">
+    <div>
+      <%= f.label :start_date, "Desde", class: "mb-1 block text-xs font-medium uppercase tracking-wider text-ink-400" %>
+      <%= f.date_field :start_date, class: "field", required: true %>
+    </div>
+    <div>
+      <%= f.label :end_date, "Hasta", class: "mb-1 block text-xs font-medium uppercase tracking-wider text-ink-400" %>
+      <%= f.date_field :end_date, class: "field", required: true %>
+    </div>
+  </div>
+
+  <div>
+    <%= f.label :notes, "Notas", class: "mb-1 block text-xs font-medium uppercase tracking-wider text-ink-400" %>
+    <%= f.text_area :notes, rows: 3, class: "field", placeholder: "Objetivo de la semana, restricciones…" %>
+  </div>
+
+  <div class="flex items-center gap-2 pt-2">
+    <%= f.submit (plan.persisted? ? "Guardar cambios" : "Crear plan"), class: "btn-primary" %>
+    <%= link_to "Cancelar", plans_path, class: "btn-ghost" %>
+  </div>
+<% end %>

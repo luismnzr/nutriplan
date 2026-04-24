@@ -19,4 +19,8 @@ RSpec.describe MealItem, type: :model do
     item = create(:meal_item, swap_options: ["  Yogurt ", "", "Omelette", "   "])
     expect(item.swap_options).to eq(%w[Yogurt Omelette])
   end
+
+  # String coercion is handled in the controller (MealItemsController#item_params).
+  # PG array columns cast a String to [] on assignment, so the model receives
+  # a pre-split Array already.
 end

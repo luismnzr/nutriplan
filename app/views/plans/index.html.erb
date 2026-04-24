@@ -1,0 +1,34 @@
+<% content_for :title, "Mis planes" %>
+
+<div class="flex items-center justify-between">
+  <div>
+    <p class="text-xs uppercase tracking-[0.18em] text-ink-400">Planes</p>
+    <h1 class="text-2xl font-semibold tracking-tight text-ink-100">Mis planes</h1>
+  </div>
+  <%= link_to "Nuevo plan", new_plan_path, class: "btn-primary" %>
+</div>
+
+<% if @plans.any? %>
+  <ul class="mt-8 divide-y divide-ink-800 rounded-md border border-ink-800 bg-ink-900/40">
+    <% @plans.each do |plan| %>
+      <li class="flex items-center justify-between px-4 py-3">
+        <div>
+          <%= link_to plan.name, edit_plan_path(plan), class: "text-sm font-medium text-ink-100 hover:text-accent-400 hover:no-underline" %>
+          <p class="text-xs text-ink-400">
+            <%= I18n.l(plan.start_date, format: :short) %> — <%= I18n.l(plan.end_date, format: :short) %>
+          </p>
+        </div>
+        <div class="flex items-center gap-2">
+          <%= link_to "Ver", plan_path(plan), class: "btn-ghost" %>
+          <%= link_to "Editar", edit_plan_path(plan), class: "btn-ghost" %>
+        </div>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <div class="mt-12 rounded-md border border-dashed border-ink-800 px-6 py-10 text-center">
+    <p class="text-sm text-ink-300">Aún no tienes planes.</p>
+    <p class="mt-1 text-xs text-ink-500">Crea tu primer plan semanal para empezar a organizar tus comidas.</p>
+    <%= link_to "Crear plan", new_plan_path, class: "btn-primary mt-4" %>
+  </div>
+<% end %>

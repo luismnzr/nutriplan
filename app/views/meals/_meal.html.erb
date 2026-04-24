@@ -1,0 +1,26 @@
+<%= turbo_frame_tag dom_id(meal), class: "block rounded-md border border-ink-800 bg-ink-900/60" do %>
+  <div class="flex items-center justify-between px-2 py-1">
+    <span class="text-[10px] uppercase tracking-wider text-ink-500">
+      <%= meal.time&.strftime("%H:%M") %>
+    </span>
+    <% if meal.snack? && meal.position > 3 %>
+      <%= button_to meal_path(meal), method: :delete,
+                    class: "text-[10px] text-ink-500 hover:text-red-400",
+                    form: { data: { turbo_confirm: "¿Eliminar esta colación?" } } do %>
+        ×
+      <% end %>
+    <% end %>
+  </div>
+
+  <div id="<%= dom_id(meal, :items) %>" class="flex flex-col divide-y divide-ink-800/60 border-t border-ink-800/60">
+    <% meal.meal_items.sort_by(&:position).each do |item| %>
+      <%= render "meal_items/meal_item", meal_item: item %>
+    <% end %>
+  </div>
+
+  <%= button_to meal_meal_items_path(meal),
+                class: "w-full px-2 py-1.5 text-[11px] text-ink-500 hover:text-accent-400 hover:bg-ink-800/60 text-left",
+                form: { data: { turbo_frame: dom_id(meal, :items) } } do %>
+    + Alimento
+  <% end %>
+<% end %>

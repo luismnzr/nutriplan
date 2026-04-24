@@ -1,0 +1,21 @@
+es:
+  date:
+    abbr_day_names: [dom, lun, mar, mié, jue, vie, sáb]
+    day_names: [domingo, lunes, martes, miércoles, jueves, viernes, sábado]
+    abbr_month_names: [~, ene, feb, mar, abr, may, jun, jul, ago, sep, oct, nov, dic]
+    month_names: [~, enero, febrero, marzo, abril, mayo, junio, julio, agosto, septiembre, octubre, noviembre, diciembre]
+    formats:
+      default: "%Y-%m-%d"
+      short: "%-d %b"
+      long: "%-d de %B"
+  meal_types:
+    breakfast: Desayuno
+    lunch: Comida
+    dinner: Cena
+    snack: Colación
+  meal_log:
+    status:
+      planned: Planeada
+      eaten: Comí
+      skipped: Skip
+      modified: Modifiqué

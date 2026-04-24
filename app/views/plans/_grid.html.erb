@@ -1,0 +1,48 @@
+<%
+  days = plan.plan_days.includes(meals: :meal_items).order(:date)
+  rows = PlansHelper::MEAL_ROWS
+  cols_style = "grid-template-columns: 110px repeat(#{days.size}, minmax(220px, 1fr));"
+%>
+
+<div class="overflow-x-auto rounded-md border border-ink-800 bg-ink-900/30">
+  <div class="min-w-full">
+    <%# Header row %>
+    <div class="sticky top-0 grid border-b border-ink-800 bg-ink-950/80 backdrop-blur" style="<%= cols_style %>">
+      <div class="px-3 py-2 text-[10px] uppercase tracking-wider text-ink-500">Comida</div>
+      <% days.each do |day| %>
+        <div class="border-l border-ink-800"><%= day_column_header(day) %></div>
+      <% end %>
+    </div>
+
+    <%# Meal rows %>
+    <% rows.each do |type| %>
+      <div class="grid border-b border-ink-800 last:border-b-0" style="<%= cols_style %>">
+        <div class="flex items-center px-3 py-3 text-xs font-medium uppercase tracking-wider text-ink-400">
+          <%= meal_type_label(type) %>
+        </div>
+
+        <% days.each do |day| %>
+          <div class="border-l border-ink-800 p-2">
+            <% if type == "snack" %>
+              <div id="<%= dom_id(day, :snacks) %>" class="flex flex-col gap-2">
+                <% meals_for(day, type).each do |meal| %>
+                  <%= render "meals/meal", meal: meal %>
+                <% end %>
+              </div>
+              <%= button_to plan_meals_path(plan, meal: { plan_day_id: day.id, meal_type: "snack" }),
+                            class: "mt-2 w-full rounded-md border border-dashed border-ink-700 px-2 py-1 text-[11px] text-ink-400 hover:border-accent-500 hover:text-accent-400",
+                            form: { data: { turbo_frame: "_top" } } do %>
+                + Colación
+              <% end %>
+            <% else %>
+              <% meal = meals_for(day, type).first %>
+              <% if meal %>
+                <%= render "meals/meal", meal: meal %>
+              <% end %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>

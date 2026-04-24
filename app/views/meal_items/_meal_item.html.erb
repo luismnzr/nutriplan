@@ -1,0 +1,34 @@
+<%= turbo_frame_tag dom_id(meal_item), class: "block" do %>
+  <%= form_with model: meal_item, url: meal_item_path(meal_item), method: :patch,
+                data: { controller: "autosave" },
+                class: "group flex flex-col gap-1 px-2 py-2 hover:bg-ink-800/40" do |f| %>
+    <div class="flex items-start gap-2">
+      <%= f.text_area :description, rows: 1,
+                      class: "field min-h-0 resize-none border-0 bg-transparent px-0 py-0 text-sm text-ink-100 focus:ring-0",
+                      data: { action: "blur->autosave#save", autosave_target: "input" },
+                      placeholder: "Alimento" %>
+      <%= button_to meal_item_path(meal_item), method: :delete,
+                    class: "opacity-0 group-hover:opacity-100 text-[11px] text-ink-500 hover:text-red-400",
+                    form: { data: { turbo_confirm: "¿Quitar este alimento?" } } do %>
+        ×
+      <% end %>
+    </div>
+
+    <%= f.text_field :quantity,
+                     class: "field border-0 bg-transparent px-0 py-0 text-xs text-ink-400 placeholder-ink-600 focus:ring-0",
+                     data: { action: "blur->autosave#save", autosave_target: "input" },
+                     placeholder: "Cantidad" %>
+
+    <details class="mt-1 text-[11px] text-ink-500">
+      <summary class="cursor-pointer select-none hover:text-ink-300">
+        Intercambios (<%= meal_item.swap_options.size %>)
+      </summary>
+      <%= f.text_area :swap_options,
+                      rows: [meal_item.swap_options.size + 1, 3].max,
+                      value: meal_item.swap_options.join("\n"),
+                      class: "field mt-1 text-xs",
+                      data: { action: "blur->autosave#save", autosave_target: "input" },
+                      placeholder: "Una opción por línea" %>
+    </details>
+  <% end %>
+<% end %>

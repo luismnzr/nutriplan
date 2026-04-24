@@ -10,11 +10,7 @@
   </p>
 
   <div class="mt-8 flex items-center gap-3">
-    <% if user_signed_in? %>
-      <span class="text-sm text-ink-400">Hola, <%= current_user.email %>.</span>
-    <% else %>
-      <%= link_to "Iniciar sesión", new_user_session_path, class: "btn-primary" %>
-      <%= link_to "Crear cuenta", new_user_registration_path, class: "btn-ghost" %>
-    <% end %>
+    <%= link_to "Iniciar sesión", new_user_session_path, class: "btn-primary" %>
+    <%= link_to "Crear cuenta", new_user_registration_path, class: "btn-ghost" %>
   </div>
 </section>
