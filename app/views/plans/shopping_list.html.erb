@@ -1,0 +1,29 @@
+<% content_for :title, "Lista de compras — #{@plan.name}" %>
+
+<div class="flex items-center justify-between">
+  <div>
+    <p class="text-xs uppercase tracking-[0.18em] text-ink-400">
+      <%= I18n.l(@plan.start_date, format: :short) %> — <%= I18n.l(@plan.end_date, format: :short) %>
+    </p>
+    <h1 class="text-2xl font-semibold tracking-tight text-ink-100">Lista de compras</h1>
+    <p class="mt-1 text-xs text-ink-500">
+      <%= link_to @plan.name, edit_plan_path(@plan), class: "hover:text-accent-400 hover:no-underline" %>
+    </p>
+  </div>
+</div>
+
+<% if @rows.any? %>
+  <ul id="shopping_list_items" class="mt-6 divide-y divide-ink-800 rounded-md border border-ink-800 bg-ink-900/40">
+    <% @rows.each do |row| %>
+      <%= render "shopping_list/item", plan: @plan, row: row %>
+    <% end %>
+  </ul>
+  <p class="mt-3 text-xs text-ink-500">
+    <%= @rows.count { |r| r[:checked] } %> / <%= @rows.size %> marcados
+  </p>
+<% else %>
+  <div class="mt-12 rounded-md border border-dashed border-ink-800 px-6 py-10 text-center">
+    <p class="text-sm text-ink-300">Aún no hay alimentos en este plan.</p>
+    <%= link_to "Editar plan", edit_plan_path(@plan), class: "btn-primary mt-4" %>
+  </div>
+<% end %>

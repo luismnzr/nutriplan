@@ -46,8 +46,7 @@ class PlansController < ApplicationController
   end
 
   def shopping_list
-    # placeholder · sub-fase 4
-    redirect_to @plan, alert: "Lista de compras aún no disponible"
+    @rows = @plan.shopping_list
   end
 
   private

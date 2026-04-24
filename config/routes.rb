@@ -2,10 +2,13 @@ Rails.application.routes.draw do
   devise_for :users
 
   resource :today, only: :show, controller: "today"
+  resource :history, only: :show, controller: "history"
 
   resources :plans do
     resources :meals, only: [:create]
-    get :shopping_list, on: :member
+    get  :shopping_list, on: :member
+    post "shopping_list_checks/toggle", on: :member,
+         to: "shopping_list_checks#toggle", as: :toggle_shopping_list_check
   end
   resources :meals, only: [:destroy] do
     resources :meal_items, only: [:create]

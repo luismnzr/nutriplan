@@ -1,5 +1,7 @@
 <% content_for :title, @plan.name %>
 
+<% days = @plan.plan_days.includes(meals: [:meal_items, :meal_log]).order(:date) %>
+
 <div class="flex items-center justify-between">
   <div>
     <p class="text-xs uppercase tracking-[0.18em] text-ink-400">
@@ -7,7 +9,88 @@
     </p>
     <h1 class="text-2xl font-semibold tracking-tight text-ink-100"><%= @plan.name %></h1>
   </div>
-  <%= link_to "Editar", edit_plan_path(@plan), class: "btn-ghost" %>
+  <div class="flex items-center gap-2">
+    <%= link_to "Lista de compras", shopping_list_plan_path(@plan), class: "btn-ghost" %>
+    <%= link_to "Editar", edit_plan_path(@plan), class: "btn-primary" %>
+  </div>
 </div>
 
-<p class="mt-6 text-sm text-ink-400">Vista solo lectura con indicadores de cumplimiento — sub-fase 4.</p>
+<% if @plan.notes.present? %>
+  <p class="mt-4 rounded-md border border-ink-800 bg-ink-900/40 px-4 py-3 text-sm text-ink-300 whitespace-pre-line">
+    <%= @plan.notes %>
+  </p>
+<% end %>
+
+<div class="mt-8 flex flex-col gap-4">
+  <% days.each do |day| %>
+    <%
+      total  = day.meals.size
+      filled = day.meals.count { |m| m.meal_log&.fulfilled? }
+      ratio  = total.zero? ? 0 : filled.to_f / total
+      badge_class =
+        if total.zero? then "text-ink-500"
+        elsif ratio >= 0.8 then "text-accent-300"
+        elsif ratio >= 0.5 then "text-amber-300"
+        else "text-ink-500"
+        end
+    %>
+    <article class="rounded-md border border-ink-800 bg-ink-900/40">
+      <header class="flex items-center justify-between border-b border-ink-800 px-4 py-2">
+        <div>
+          <p class="text-[11px] uppercase tracking-wider text-ink-500">
+            <%= I18n.l(day.date, format: "%A").capitalize %>
+          </p>
+          <p class="text-sm font-medium text-ink-200">
+            <%= I18n.l(day.date, format: "%-d de %B") %>
+          </p>
+        </div>
+        <span class="text-xs <%= badge_class %>">
+          <%= filled %>/<%= total %>
+        </span>
+      </header>
+
+      <div class="grid gap-3 p-4 md:grid-cols-2">
+        <% day.meals.sort_by { |m| [m.position, m.time || Time.zone.parse("00:00")] }.each do |meal| %>
+          <%
+            status = meal.meal_log&.status
+            dot_class =
+              case status
+              when "eaten"    then "bg-accent-400"
+              when "modified" then "bg-amber-400"
+              when "skipped"  then "bg-red-400"
+              else "bg-ink-700"
+              end
+          %>
+          <div class="flex gap-3 rounded-md border border-ink-800 bg-ink-950/60 p-3">
+            <span class="mt-1.5 h-2 w-2 flex-none rounded-full <%= dot_class %>"></span>
+            <div class="flex-1">
+              <p class="text-[10px] uppercase tracking-wider text-ink-500">
+                <%= meal_type_label(meal.meal_type) %>
+                <% if meal.time %> · <%= meal.time.strftime("%H:%M") %><% end %>
+              </p>
+              <% if meal.meal_items.any? %>
+                <ul class="mt-1 space-y-0.5">
+                  <% meal.meal_items.sort_by(&:position).each do |item| %>
+                    <li class="text-sm text-ink-200">
+                      <%= item.description %>
+                      <% if item.quantity.present? %>
+                        <span class="text-xs text-ink-500">· <%= item.quantity %></span>
+                      <% end %>
+                    </li>
+                  <% end %>
+                </ul>
+              <% else %>
+                <p class="mt-1 text-xs italic text-ink-500">Sin alimentos</p>
+              <% end %>
+              <% if status == "modified" && meal.meal_log.actual_description.present? %>
+                <p class="mt-2 text-xs text-amber-300">
+                  ↔ <%= meal.meal_log.actual_description %>
+                </p>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </article>
+  <% end %>
+</div>

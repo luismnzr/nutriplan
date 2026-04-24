@@ -1,0 +1,28 @@
+<%
+  dom_key = "shopping_item_#{Digest::MD5.hexdigest(row[:key])}"
+  desc_classes = row[:checked] ? "text-ink-500 line-through" : "text-ink-100"
+  qty_classes  = row[:checked] ? "text-ink-600 line-through" : "text-ink-400"
+  box_classes  = row[:checked] ?
+    "border-accent-500 bg-accent-500/20 text-accent-200" :
+    "border-ink-700 bg-ink-900"
+%>
+
+<li id="<%= dom_key %>">
+  <%= button_to toggle_shopping_list_check_plan_path(plan, item_key: row[:key]),
+                form: { data: { turbo_frame: "_top" }, class: "w-full" },
+                class: "flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-ink-800/40" do %>
+    <span class="flex h-5 w-5 flex-none items-center justify-center rounded border <%= box_classes %>">
+      <% if row[:checked] %>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M16.704 5.29a1 1 0 010 1.42l-8 8a1 1 0 01-1.42 0l-4-4a1 1 0 111.42-1.42L8 12.59l7.29-7.3a1 1 0 011.414 0z" clip-rule="evenodd" />
+        </svg>
+      <% end %>
+    </span>
+    <span class="flex-1">
+      <span class="block text-sm <%= desc_classes %>"><%= row[:description] %></span>
+      <% if row[:quantity].present? %>
+        <span class="block text-xs <%= qty_classes %>"><%= row[:quantity] %></span>
+      <% end %>
+    </span>
+  <% end %>
+</li>

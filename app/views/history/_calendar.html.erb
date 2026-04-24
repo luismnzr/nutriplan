@@ -1,0 +1,24 @@
+<%
+  days = history_grid_range(month)
+%>
+
+<div class="grid grid-cols-7 gap-1 text-center text-[10px] uppercase tracking-wider text-ink-500">
+  <% HistoryHelper::DAY_ABBR.each do |d| %>
+    <div><%= d %></div>
+  <% end %>
+</div>
+
+<div class="mt-1 grid grid-cols-7 gap-1">
+  <% days.each do |date| %>
+    <% in_month = (date.month == month.month) %>
+    <div class="aspect-square rounded <%= cell_class_fn.call(date, in_month) %> flex flex-col items-center justify-center p-1">
+      <span class="text-[10px] leading-none <%= in_month ? 'text-ink-200' : 'text-ink-500' %>">
+        <%= date.day %>
+      </span>
+      <% label = cell_label_fn.call(date) %>
+      <% if label.present? %>
+        <span class="mt-0.5 text-[10px] font-medium leading-none"><%= label %></span>
+      <% end %>
+    </div>
+  <% end %>
+</div>

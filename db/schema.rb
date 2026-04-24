@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_04_24_135224) do
+ActiveRecord::Schema[7.2].define(version: 2026_04_24_142816) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -84,6 +84,15 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_24_135224) do
     t.index ["meal_plan_id"], name: "index_plan_days_on_meal_plan_id"
   end
 
+  create_table "shopping_list_checks", force: :cascade do |t|
+    t.bigint "meal_plan_id", null: false
+    t.string "item_key", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["meal_plan_id", "item_key"], name: "index_shopping_list_checks_on_meal_plan_id_and_item_key", unique: true
+    t.index ["meal_plan_id"], name: "index_shopping_list_checks_on_meal_plan_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -104,4 +113,5 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_24_135224) do
   add_foreign_key "meal_plans", "users", column: "owner_id"
   add_foreign_key "meals", "plan_days"
   add_foreign_key "plan_days", "meal_plans"
+  add_foreign_key "shopping_list_checks", "meal_plans"
 end
